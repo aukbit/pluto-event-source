@@ -1,0 +1,41 @@
+machine:
+  services:
+    - docker
+  environment:
+    GODIST: "go1.8.linux-amd64.tar.gz"
+    GOPATH: "${HOME}/.go_workspace:$HOME/.go_project"
+    PROJECT_PARENT_PATH: ${HOME}/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}
+    PROJECT_PATH: ${HOME}/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
+  pre:
+    - go version
+  post:
+    # install latest version of go
+    - mkdir -p download
+    - test -e download/${GODIST} || curl -o download/${GODIST} https://storage.googleapis.com/golang/${GODIST}
+    - sudo rm -rf /usr/local/go
+    - sudo tar -C /usr/local -xzf download/${GODIST}
+    - go version
+
+dependencies:
+  pre:
+    - docker run --name cassandra -d -p 7000:7000 -p 9042:9042 cassandra:3.7
+    # Install govendor tool
+    - go get -u github.com/kardianos/govendor
+  override:
+    # https://circleci.com/docs/1.0/language-go/#dependencies
+    - mkdir -p ${PROJECT_PARENT_PATH}
+    # - ln -s ${HOME}/${CIRCLE_PROJECT_REPONAME} ${HOME}/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
+    # https://subosito.com/posts/golang-circleci/
+    - rsync -avC ${HOME}/${CIRCLE_PROJECT_REPONAME} ${PROJECT_PARENT_PATH}
+    # go to project directory && look at what is using a package
+    - cd ${PROJECT_PATH} && govendor list -v fmt
+
+test:
+  pre:
+    # connect to docker cassandra instance to install test scripts
+    - docker run --link cassandra:cassandra -v $PWD/test/config/cassandra:/config cassandra:3.7 /config/wait-for-cassandra.sh cassandra cqlsh -f /config/commands.cql cassandra
+  override:
+    # - go test -v ./...
+    # go to project directory && test your repository only
+    - cd ${PROJECT_PATH} && govendor test -v +local
+    - cd ${PROJECT_PATH} && govendor test -v -race +local
