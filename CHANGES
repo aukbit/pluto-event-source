@@ -1,3 +1,7 @@
+Version 0.2.0:
+ - draft pubsub within GCP
+ - Merge branch release-0.1.0
+
 Version 0.1.0
  - draft store
  - Initial commit
