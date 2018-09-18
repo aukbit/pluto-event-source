@@ -1,3 +1,7 @@
+Version 0.3.1:
+ - add wrapper as helper client funcs
+ - Merge branch release-0.3.0
+
 Version 0.3.0:
  - define general aggregator func and dispatch
  - Merge branch release-0.2.0
