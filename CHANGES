@@ -1,3 +1,7 @@
+Version 0.3.2:
+ - fix error wrapper NewEventSourceQueryClient
+ - Merge branch release-0.3.1
+
 Version 0.3.1:
  - add wrapper as helper client funcs
  - Merge branch release-0.3.0
