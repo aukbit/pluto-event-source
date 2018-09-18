@@ -1,3 +1,7 @@
+Version 0.3.0:
+ - define general aggregator func and dispatch
+ - Merge branch release-0.2.0
+
 Version 0.2.0:
  - draft pubsub within GCP
  - Merge branch release-0.1.0

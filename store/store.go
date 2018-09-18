@@ -2,14 +2,24 @@ package store
 
 import (
 	"context"
-	"errors"
 	"io"
 	"time"
+
+	"github.com/pkg/errors"
 
 	pb "github.com/aukbit/event-source-proto"
 	"github.com/aukbit/pluto"
 	"github.com/aukbit/pluto/client"
 )
+
+// EventSourceQueryClientName constant to be used as name of the event source query client connection
+const EventSourceQueryClientName string = "event_source_query"
+
+// EventSourceCommandClientName constant to be used as name of the event source command client connection
+const EventSourceCommandClientName string = "event_source_command"
+
+// AggregatorIDQueryKey constant to be used as the key in Query Params
+const AggregatorIDQueryKey string = "aID"
 
 var (
 	errEventSourceClientNotAvailable = errors.New("event source client not available")
@@ -18,7 +28,7 @@ var (
 // Store holds aggregator state and version
 type Store struct {
 	State   interface{}
-	Version int32
+	Version int64
 }
 
 // ApplyFn defines type for apply functions
@@ -34,18 +44,18 @@ func NewStore(aggregator interface{}) *Store {
 
 // LoadEvents stream events by aggregator id and apply the required changes
 // TODO: use snapshots
-func (s *Store) LoadEvents(ctx context.Context, name, id string, fn ApplyFn) error {
+func (s *Store) LoadEvents(ctx context.Context, id string, fn ApplyFn) error {
 	//
-	c, ok := pluto.FromContext(ctx).Client(name)
+	c, ok := pluto.FromContext(ctx).Client(EventSourceQueryClientName)
 	if !ok {
-		return errEventSourceClientNotAvailable
+		return errors.Wrap(errEventSourceClientNotAvailable, EventSourceQueryClientName)
 	}
 	conn, err := c.Dial(client.Timeout(2 * time.Second))
 	if err != nil {
 		return err
 	}
 	defer conn.Close()
-	stream, err := c.Stub(conn).(pb.EventSourceProjectionClient).List(ctx, &pb.Query{Params: map[string]string{"aID": id}})
+	stream, err := c.Stub(conn).(pb.EventSourceProjectionClient).List(ctx, &pb.Query{Params: map[string]string{AggregatorIDQueryKey: id}})
 	if err != nil {
 		return err
 	}
@@ -60,6 +70,30 @@ func (s *Store) LoadEvents(ctx context.Context, name, id string, fn ApplyFn) err
 		if err := s.apply(fact, fn); err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+// Dispatch triggeres an event to be created
+func (s *Store) Dispatch(ctx context.Context, e *pb.Event, fn ApplyFn) error {
+	// Get gRPC client from service
+	c, ok := pluto.FromContext(ctx).Client(EventSourceCommandClientName)
+	if !ok {
+		return errors.Wrap(errEventSourceClientNotAvailable, EventSourceCommandClientName)
+	}
+	// Establish grpc connection
+	conn, err := c.Dial(client.Timeout(2 * time.Second))
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	_, err = c.Stub(conn).(pb.EventSourceCommandClient).Create(ctx, e)
+	if err != nil {
+		return err
+	}
+	// Apply last event to the aggregator
+	if err := s.apply(e, fn); err != nil {
+		return err
 	}
 	return nil
 }
