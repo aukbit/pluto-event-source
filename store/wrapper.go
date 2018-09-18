@@ -11,7 +11,7 @@ func NewEventSourceQueryClient(target string) *plutoClt.Client {
 	return plutoClt.New(
 		plutoClt.Name(EventSourceQueryClientName),
 		plutoClt.GRPCRegister(func(cc *grpc.ClientConn) interface{} {
-			return pb.NewEventSourceCommandClient(cc)
+			return pb.NewEventSourceProjectionClient(cc)
 		}),
 		plutoClt.Target(target),
 	)
