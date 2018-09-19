@@ -296,10 +296,12 @@
     "github.com/aukbit/event-source-proto",
     "github.com/aukbit/pluto",
     "github.com/aukbit/pluto/client",
+    "github.com/aukbit/pluto/server",
     "github.com/golang/protobuf/proto",
     "github.com/pkg/errors",
     "github.com/rs/zerolog",
     "golang.org/x/net/context",
+    "google.golang.org/grpc",
     "google.golang.org/grpc/metadata",
   ]
   solver-name = "gps-cdcl"
