@@ -12,14 +12,22 @@ import (
 	"github.com/aukbit/pluto/client"
 )
 
-// EventSourceQueryClientName constant to be used as name of the event source query client connection
-const EventSourceQueryClientName string = "event_source_query"
+const (
+	// EventSourceQueryClientName constant to be used as name of the event source query client connection
+	EventSourceQueryClientName string = "event_source_query"
 
-// EventSourceCommandClientName constant to be used as name of the event source command client connection
-const EventSourceCommandClientName string = "event_source_command"
+	// EventSourceCommandClientName constant to be used as name of the event source command client connection
+	EventSourceCommandClientName string = "event_source_command"
 
-// AggregatorIDQueryKey constant to be used as the key in Query Params
-const AggregatorIDQueryKey string = "aID"
+	// AggregatorIDQueryKey constant to be used as the key in Query Params
+	AggregatorIDQueryKey string = "AID"
+
+	// HighestVersionQueryKey constant to be used as the key in Query Params
+	HighestVersionQueryKey string = "HV"
+
+	// LowestVersionQueryKey constant to be used as the key in Query Params
+	LowestVersionQueryKey string = "LV"
+)
 
 var (
 	errEventSourceClientNotAvailable = errors.New("event source client not available")
@@ -27,8 +35,10 @@ var (
 
 // Store holds aggregator state and version
 type Store struct {
-	State   interface{}
-	Version int64
+	State          interface{}
+	Version        int64
+	HighestVersion int64
+	LowestVersion  int64
 }
 
 // ApplyFn defines type for apply functions
@@ -55,7 +65,17 @@ func (s *Store) LoadEvents(ctx context.Context, id string, fn ApplyFn) error {
 		return err
 	}
 	defer conn.Close()
-	stream, err := c.Stub(conn).(pb.EventSourceProjectionClient).List(ctx, &pb.Query{Params: map[string]string{AggregatorIDQueryKey: id}})
+	// Define query parameters
+	params := make(map[string]string)
+	params[AggregatorIDQueryKey] = id
+	if s.HighestVersion != 0 {
+		params[HighestVersionQueryKey] = string(s.HighestVersion)
+	}
+	if s.LowestVersion != 0 {
+		params[LowestVersionQueryKey] = string(s.LowestVersion)
+	}
+	// List
+	stream, err := c.Stub(conn).(pb.EventSourceProjectionClient).List(ctx, &pb.Query{Params: params})
 	if err != nil {
 		return err
 	}
