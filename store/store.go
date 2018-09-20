@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"io"
+	"strconv"
 	"time"
 
 	"github.com/pkg/errors"
@@ -69,10 +70,10 @@ func (s *Store) LoadEvents(ctx context.Context, id string, fn ApplyFn) error {
 	params := make(map[string]string)
 	params[AggregatorIDQueryKey] = id
 	if s.HighestVersion != 0 {
-		params[HighestVersionQueryKey] = string(s.HighestVersion)
+		params[HighestVersionQueryKey] = strconv.FormatInt(s.HighestVersion, 10)
 	}
 	if s.LowestVersion != 0 {
-		params[LowestVersionQueryKey] = string(s.LowestVersion)
+		params[LowestVersionQueryKey] = strconv.FormatInt(s.LowestVersion, 10)
 	}
 	// List
 	stream, err := c.Stub(conn).(pb.EventSourceProjectionClient).List(ctx, &pb.Query{Params: params})
