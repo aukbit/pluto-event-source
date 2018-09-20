@@ -1,3 +1,7 @@
+Version 0.4.1:
+ - fix error - parse int64 to string
+ - Merge branch release-0.4.0
+
 Version 0.4.0:
  - add new query params regarding version limits
  - Merge branch release-0.3.2
