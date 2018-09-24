@@ -1,7 +1,7 @@
 package pubsub
 
 import (
-	"context"
+	context "golang.org/x/net/context"
 
 	pb "github.com/aukbit/event-source-proto"
 	"github.com/aukbit/pluto-event-source/store"
