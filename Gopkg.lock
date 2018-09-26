@@ -26,12 +26,12 @@
   version = "v0.6.0"
 
 [[projects]]
-  digest = "1:f3d8301af92c6725de30d92751d851560309bc3fd0678b5009c8bb33290b5bc0"
+  digest = "1:be7eac8dfa5d34124eca37432094d56dc88ffa2236f94ba140a40753e23b90ac"
   name = "github.com/aukbit/event-source-proto"
   packages = ["."]
   pruneopts = "UT"
-  revision = "20eaa8449d56bda6fe8734d7edf4c287fa55e3c5"
-  version = "0.1.3"
+  revision = "3a4e5a33e1dbb726e9b496a71e15d96b2f020e60"
+  version = "0.2.0"
 
 [[projects]]
   branch = "master"
