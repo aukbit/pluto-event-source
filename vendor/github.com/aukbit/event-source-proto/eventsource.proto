@@ -7,6 +7,7 @@ package es;
 // The EventSourceCommand service definition.
 service EventSourceCommand {
     rpc Create (Event) returns (Ack) {}
+    rpc Snap (Event) returns (Ack) {}
 }
 
 // The EventSourceCommand service definition.
@@ -22,27 +23,23 @@ message Query {
 
 // Message containing the event data
 message Event {
-    // Id is a unique key for the event.
-    // NOTE: in most cases should be an auto-increment key, as we want to keep
-    // events in order, but order can also be achieved by created_at timestamp
-    int64 id = 1;
-    // Topic (name) of the event. These should be written in the past tense (user_created)
-    string topic = 2;
+    // Topic (name) of the event. These should be written in the past tense (snap_created)
+    string topic = 1;
     // Aggregate to which the event refers to.
-    Aggregate aggregate = 3;
+    Aggregate aggregate = 2;
     // Priority of the event, where 0 is the highest priority.
-    int32 priority = 4;
+    int32 priority = 3;
     // Signature includes SHA1 signature computed against it's contents and signature of the previous event.
-    string signature = 5;
+    string signature = 4;
     // Origin of the event. e.g. service name.
-    string origin_name = 6;
+    string origin_name = 5;
     // Origin of the event. e.g. service ip address / browser.
-    string origin_ip = 7;
+    string origin_ip = 6;
+    // Metadata
+    map<string, string> metadata = 7;
     // Created has the identification of which service has created the event and
     // respective timestamp at which the event ocurred
     google.protobuf.Timestamp created = 8;
-    // Metadata
-    map<string, string> metadata = 9;
     // ...
 }
 
