@@ -1,3 +1,7 @@
+Version 0.5.2:
+ - dep ensure
+ - Merge branch release-0.5.1
+
 Version 0.5.1:
  - update context import
  - Merge branch release-0.5.0
