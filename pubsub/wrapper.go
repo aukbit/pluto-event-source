@@ -1,10 +1,18 @@
 package pubsub
 
 import (
+	"errors"
+
 	context "golang.org/x/net/context"
 
 	pb "github.com/aukbit/event-source-proto"
 	"github.com/aukbit/pluto-event-source/store"
+)
+
+var (
+	ErrEventWithoutAggregate = errors.New("event can not contain nil as aggregate")
+	ErrInvalidAggregateId    = errors.New("event can not have an empty string as aggregateID")
+	ErrInvalidVersion        = errors.New("event can not have 0 as version")
 )
 
 // GetAggregateIDFn type
@@ -16,12 +24,24 @@ type HookFn func(ctx context.Context, e *pb.Event, prevState, nextState interfac
 // ActionWrapper loads an agregator current state and previous.
 // Hook functions should be used to trigger any subsequent business rules
 // Or just simple cache the state of the aggregator
-func ActionWrapper(aggregator interface{}, gFn GetAggregateIDFn, aFn store.ApplyFn, hFn ...HookFn) Action {
+func ActionWrapper(aggregator interface{}, aFn store.ApplyFn, hFn ...HookFn) Action {
 	return func(ctx context.Context, e *pb.Event) error {
-		id, err := gFn(e)
-		if err != nil {
-			return err
+
+		// Verify event aggregate
+		if e.GetAggregate() == nil {
+			return ErrEventWithoutAggregate
 		}
+
+		if e.Aggregate.GetId() == "" {
+			return ErrInvalidAggregateId
+		}
+
+		if e.Aggregate.GetVersion() == 0 {
+			return ErrInvalidVersion
+		}
+
+		//
+		id := e.Aggregate.GetId()
 
 		// Initialize new store
 		s := store.NewStore(aggregator)
