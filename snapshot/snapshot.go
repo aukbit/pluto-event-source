@@ -51,6 +51,8 @@ func TakeSnapshot(ctx context.Context, e *pb.Event, aggregator proto.Message, aF
 
 	// Create an event with the snapshot data
 	snap := &pb.Event{
+		Topic: SnapshotCreated,
+
 		Aggregate: &pb.Aggregate{
 			Id:      e.Aggregate.GetId(),
 			Schema:  fmt.Sprintf("%T", aggregator),
