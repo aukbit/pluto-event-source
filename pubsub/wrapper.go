@@ -2,13 +2,12 @@ package pubsub
 
 import (
 	"errors"
-	"fmt"
 
 	context "golang.org/x/net/context"
 
 	pb "github.com/aukbit/event-source-proto"
-	"github.com/aukbit/pluto"
-	"github.com/aukbit/pluto-event-source/store"
+	snapshot "github.com/aukbit/pluto-event-source/snapshot"
+	store "github.com/aukbit/pluto-event-source/store"
 	"github.com/golang/protobuf/proto"
 )
 
@@ -76,11 +75,6 @@ func ActionWrapper(aggregator interface{}, aFn store.ApplyFn, hFn ...HookFn) Act
 
 // -----------------------------------------------------------------------------
 
-const (
-	// SnapshotCreated topic
-	SnapshotCreated = "snapshot_created"
-)
-
 // SnapshotActionWrapper loads an agregator current state. Takes a snapshot every
 // number events (nEvents)
 func SnapshotActionWrapper(aggregator proto.Message, aFn store.ApplyFn, nEvents int64) Action {
@@ -99,58 +93,14 @@ func SnapshotActionWrapper(aggregator proto.Message, aFn store.ApplyFn, nEvents 
 			return ErrInvalidVersion
 		}
 
-		if !isSnapshotTime(e.Aggregate.GetVersion(), nEvents) {
+		if !snapshot.IsSnapshotTime(e, nEvents) {
 			return nil
 		}
 
-		if err := takeSnapshot(ctx, e, aggregator, aFn); err != nil {
+		if err := snapshot.TakeSnapshot(ctx, e, aggregator, aFn); err != nil {
 			return err
 		}
 
 		return nil
 	}
-}
-
-func isSnapshotTime(version, factor int64) bool {
-	return (version % factor) == 0
-}
-
-func takeSnapshot(ctx context.Context, e *pb.Event, aggregator proto.Message, aFn store.ApplyFn) error {
-
-	// Initialize new store
-	s := store.NewStore(aggregator)
-	// Define version interval
-	s.LowestVersion = 1
-	s.HighestVersion = e.Aggregate.GetVersion()
-	// Load events from event store
-	if err := s.LoadEvents(ctx, e.Aggregate.GetId(), aFn); err != nil {
-		return err
-	}
-
-	// Encodes aggregator state to proto message
-	data, err := s.Marshal()
-	if err != nil {
-		return err
-	}
-
-	// Create an event with the snapshot data
-	snap := &pb.Event{
-		Aggregate: &pb.Aggregate{
-			Id:      e.Aggregate.GetId(),
-			Schema:  fmt.Sprintf("%T", aggregator),
-			Format:  pb.Aggregate_PROTOBUF,
-			Data:    data,
-			Version: e.Aggregate.GetVersion(),
-		},
-
-		OriginName: pluto.FromContext(ctx).Name(),
-		OriginIp:   "127.0.0.1", // TODO get OriginIp from service
-	}
-
-	// Snap event
-	if _, err := s.Snapit(ctx, snap); err != nil {
-		return err
-	}
-
-	return nil
 }

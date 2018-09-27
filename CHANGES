@@ -1,3 +1,7 @@
+Version 0.6.2:
+ - refactor snapshot package
+ - Merge branch release-0.6.1
+
 Version 0.6.1:
  - refactor pubsub action wrappers
  - Merge branch release-0.6.0
