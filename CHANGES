@@ -1,3 +1,7 @@
+Version 0.5.3:
+ - refactor aggregator and current version state
+ - Merge branch release-0.5.2
+
 Version 0.5.2:
  - dep ensure
  - Merge branch release-0.5.1
