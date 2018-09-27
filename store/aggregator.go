@@ -63,7 +63,12 @@ func Aggregate(ctx context.Context, aggregator interface{}, id string, in proto.
 	}
 
 	// Dispatch event
-	if err := s.Dispatch(ctx, e, apply); err != nil {
+	if _, err := s.Dispatch(ctx, e); err != nil {
+		return nil, err
+	}
+
+	// Apply last event to the aggregator
+	if err := s.apply(e, apply); err != nil {
 		return nil, err
 	}
 	logger.Info().Msg(fmt.Sprintf("state: %v", s.State))
