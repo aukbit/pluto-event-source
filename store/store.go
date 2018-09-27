@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/golang/protobuf/proto"
 	"github.com/pkg/errors"
 
 	pb "github.com/aukbit/event-source-proto"
@@ -109,6 +110,29 @@ func (s *Store) Dispatch(ctx context.Context, e *pb.Event) (*pb.Ack, error) {
 	}
 	defer conn.Close()
 	return c.Stub(conn).(pb.EventSourceCommandClient).Create(ctx, e)
+}
+
+// Snapit triggeres an snapshot to be created
+func (s *Store) Snapit(ctx context.Context, e *pb.Event) (*pb.Ack, error) {
+	// Get gRPC client from service
+	c, ok := pluto.FromContext(ctx).Client(EventSourceCommandClientName)
+	if !ok {
+		return nil, errors.Wrap(errEventSourceClientNotAvailable, EventSourceCommandClientName)
+	}
+	// Establish grpc connection
+	conn, err := c.Dial(client.Timeout(2 * time.Second))
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+	return c.Stub(conn).(pb.EventSourceCommandClient).Snap(ctx, e)
+}
+
+// Marshal takes a protocol buffer message
+// and encodes it into the wire format, returning the data.
+func (s *Store) Marshal() ([]byte, error) {
+	// Encodes snapshot state to proto message
+	return proto.Marshal(s.State.(proto.Message))
 }
 
 // apply the given event to the aggregate

@@ -1,3 +1,7 @@
+Version 0.6.1:
+ - refactor pubsub action wrappers
+ - Merge branch release-0.6.0
+
 Version 0.6.0:
  - refactor ActionWrapper
  - Merge branch release-0.5.4
