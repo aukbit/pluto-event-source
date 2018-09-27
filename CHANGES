@@ -1,3 +1,7 @@
+Version 0.6.0:
+ - refactor ActionWrapper
+ - Merge branch release-0.5.4
+
 Version 0.5.4:
  - draft snapshot package
  - Merge branch release-0.5.3
