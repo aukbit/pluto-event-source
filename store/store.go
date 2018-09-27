@@ -81,14 +81,14 @@ func (s *Store) LoadEvents(ctx context.Context, id string, fn ApplyFn) error {
 		return err
 	}
 	for {
-		fact, err := stream.Recv()
+		event, err := stream.Recv()
 		if err == io.EOF {
 			break
 		}
 		if err != nil {
 			return err
 		}
-		if err := s.apply(fact, fn); err != nil {
+		if err := s.apply(event, fn); err != nil {
 			return err
 		}
 	}
@@ -96,36 +96,32 @@ func (s *Store) LoadEvents(ctx context.Context, id string, fn ApplyFn) error {
 }
 
 // Dispatch triggeres an event to be created
-func (s *Store) Dispatch(ctx context.Context, e *pb.Event, fn ApplyFn) error {
+func (s *Store) Dispatch(ctx context.Context, e *pb.Event) (*pb.Ack, error) {
 	// Get gRPC client from service
 	c, ok := pluto.FromContext(ctx).Client(EventSourceCommandClientName)
 	if !ok {
-		return errors.Wrap(errEventSourceClientNotAvailable, EventSourceCommandClientName)
+		return nil, errors.Wrap(errEventSourceClientNotAvailable, EventSourceCommandClientName)
 	}
 	// Establish grpc connection
 	conn, err := c.Dial(client.Timeout(2 * time.Second))
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer conn.Close()
-	_, err = c.Stub(conn).(pb.EventSourceCommandClient).Create(ctx, e)
-	if err != nil {
-		return err
-	}
-	// Apply last event to the aggregator
-	if err := s.apply(e, fn); err != nil {
-		return err
-	}
-	return nil
+	return c.Stub(conn).(pb.EventSourceCommandClient).Create(ctx, e)
 }
 
 // apply the given event to the aggregate
 func (s *Store) apply(e *pb.Event, fn ApplyFn) error {
-	s.Version++
-	i, err := fn(e, s.State)
+	// given the current state apply the busines rules defined for the
+	// respective event Topic
+	n, err := fn(e, s.State)
 	if err != nil {
 		return err
 	}
-	s.State = i
+	// set changes to the state
+	s.State = n
+	// set state version the same as the aggregator
+	s.Version = e.Aggregate.GetVersion()
 	return nil
 }
