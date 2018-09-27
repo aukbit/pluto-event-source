@@ -1,3 +1,7 @@
+Version 0.6.3:
+ - fix error define topic in snap event
+ - Merge branch release-0.6.2
+
 Version 0.6.2:
  - refactor snapshot package
  - Merge branch release-0.6.1
