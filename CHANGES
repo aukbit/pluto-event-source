@@ -1,3 +1,7 @@
+Version 0.6.5:
+ - fix error apply merge to aggregator state
+ - Merge branch release-0.6.4
+
 Version 0.6.4:
  - fix error clone proto message to keep previous state
  - Merge branch release-0.6.3
