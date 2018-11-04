@@ -10,7 +10,7 @@ import (
 	context "golang.org/x/net/context"
 
 	"cloud.google.com/go/pubsub"
-	pb "github.com/aukbit/event-source-proto"
+	pb "github.com/aukbit/event-source-proto/es"
 	"github.com/aukbit/pluto"
 	"github.com/rs/zerolog"
 )

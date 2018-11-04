@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package es;
+
+option go_package = "github.com/aukbit/event-source-proto/es";
+
+import "google/protobuf/timestamp.proto";
+
+// The EventSourceCommand service definition.
+service EventSourceCommand {
+    rpc Create (Event) returns (Ack) {}
+    rpc Snap (Event) returns (Ack) {}
+}
+
+// The EventSourceCommand service definition.
+service EventSourceProjection {
+    rpc Get (Event) returns (Event) {}
+    rpc List (Query) returns (stream Event) {}
+}
+
+// Message containing query parameters
+message Query {
+  map<string, string> params = 1;
+}
+
+// Message containing the event data
+message Event {
+    // Topic (name) of the event. These should be written in the past tense (snap_created)
+    string topic = 1;
+    // Aggregate to which the event refers to.
+    Aggregate aggregate = 2;
+    // Priority of the event, where 0 is the highest priority.
+    int32 priority = 3;
+    // Signature includes SHA1 signature computed against it's contents and signature of the previous event.
+    string signature = 4;
+    // Origin of the event. e.g. service name.
+    string origin_name = 5;
+    // Origin of the event. e.g. service ip address / browser.
+    string origin_ip = 6;
+    // Metadata
+    map<string, string> metadata = 7;
+    // Created has the identification of which service has created the event and
+    // respective timestamp at which the event ocurred
+    google.protobuf.Timestamp created = 8;
+    // ...
+}
+
+// Message containing the aggregate data.
+message Aggregate {
+  string id = 1;                       // The primary key of the aggregate.
+  string schema = 2;                   // The name of the aggregate.
+  int64 version = 3;                   // The version of the aggregate, useful when using concurrency writes.
+  enum Format {
+      PROTOBUF = 0;
+      JSON = 1;
+      STRING = 2;
+  }
+  Format format = 4;                  // Encoded format of data
+  bytes data  = 5;                    // The raw object data.
+  map<string, string> metadata = 6;   // additional metadata. eg. store data from previous state that subscribers may need
+  // ...
+}
+
+// Message containing successfully event id
+message Ack {
+    bool ok = 1;
+}

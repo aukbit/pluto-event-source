@@ -3,6 +3,9 @@ package router
 import (
 	"fmt"
 	"net/http"
+	"os"
+	p "path"
+	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -58,12 +61,16 @@ func (fn WrapErr) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // Router ..
 type Router struct {
-	trie *trie
+	trie              *trie
+	notFoundHandlerFn HandlerFunc
 }
 
 // NewRouter creates a new router instance
 func NewRouter() *Router {
-	return &Router{trie: newTrie()}
+	return &Router{
+		trie:              newTrie(),
+		notFoundHandlerFn: NotFoundHandler,
+	}
 }
 
 // Handle takes a method, pattern, and http handler for a route.
@@ -115,7 +122,7 @@ func (r *Router) DELETE(path string, handlerFn HandlerFunc) {
 func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	m := r.findMatch(req)
 	if m == nil {
-		NotFoundHandler(w, req)
+		r.notFoundHandlerFn(w, req)
 		return
 	}
 	m.ServeHTTP(w, req)
@@ -130,6 +137,35 @@ func (r *Router) WrapperMiddleware(mids ...Middleware) {
 			r.trie.Put(k, data)
 		}
 	}
+}
+
+// NotFoundHandler is configuraton method to alow clients to customize NotFoundHandler
+func (r *Router) NotFoundHandler(handlerFn HandlerFunc) {
+	r.notFoundHandlerFn = handlerFn
+}
+
+// FileServer returns a handler that serves HTTP requests
+// with the contents of the file system rooted at root.
+func (r *Router) FileServer(path string, root http.Dir) {
+	r.GET(path, func(w http.ResponseWriter, req *http.Request) {
+		upath := req.URL.Path
+		if !strings.HasPrefix(upath, "/") {
+			upath = "/" + upath
+			req.URL.Path = upath
+		}
+		upath = p.Clean(upath)
+
+		f, err := root.Open(upath)
+		if err != nil {
+			if os.IsNotExist(err) {
+				r.notFoundHandlerFn(w, req)
+				return
+			}
+		}
+		defer f.Close()
+		fullName := filepath.Join(string(root), filepath.FromSlash(p.Clean("/"+upath)))
+		http.ServeFile(w, req, fullName)
+	})
 }
 
 // func (r *Router) findMatch(req *http.Request) *Match {
@@ -354,6 +390,6 @@ func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	reply.Json(w, r, http.StatusNotFound, &Err{
 		Type:    "invalid_request_error",
-		Message: "Invalid request errors arise when your request has invalid parameters.",
+		Message: fmt.Sprintf("Invalid request errors arise when your request has invalid parameters. path: %v query: %v", r.URL.EscapedPath(), r.URL.RawQuery),
 	})
 }

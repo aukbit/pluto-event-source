@@ -1,7 +1,7 @@
 package store
 
 import (
-	pb "github.com/aukbit/event-source-proto"
+	pb "github.com/aukbit/event-source-proto/es"
 	plutoClt "github.com/aukbit/pluto/client"
 	"google.golang.org/grpc"
 )

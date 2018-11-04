@@ -1,3 +1,48 @@
+Version 5.5.0:
+ - add custom router fileserver handler
+ - Merge branch release-5.4.0
+
+Version 5.4.0:
+ - allow client to define custom NotFoundHandler
+ - Merge branch release-5.3.2
+
+Version 5.3.2:
+ - add jwt middleware
+ - Merge branch release-5.3.1
+
+Version 5.3.1:
+ - review jwt context
+ - Merge branch release-5.3.0
+
+Version 5.3.0:
+ - compile proto files - dep init
+ - Merge branch release-5.2.6
+
+Version 5.2.6:
+ - fix error FromContextParam check if value exists
+ - Merge branch release-5.2.5
+
+Version 5.2.5:
+ - refactor eidMiddleware
+ - Merge branch release-5.2.4
+
+Version 5.2.4:
+ - review eidMiddleware headers
+ - Merge branch release-5.2.3
+
+Version 5.2.3:
+ - add eid to request header
+ - Merge branch release-5.2.2
+
+Version 5.2.2:
+ - use eid from request header if available
+ - Merge branch release-5.2.1
+
+Version 5.2.1:
+ - Merge branch 'develop' of github.com:aukbit/pluto into develop
+ - specify message in NotFoundHandler
+ - Merge branch release-5.2.0
+
 Version 5.2.0:
  - allow access to service ID
  - Merge branch release-5.1.7

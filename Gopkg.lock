@@ -2,7 +2,7 @@
 
 
 [[projects]]
-  digest = "1:870db62ee4067a36e94125109262bfcfba409d546cca941ebd31bf8a0faa8ad8"
+  digest = "1:ae0d66236b2b04b4ce4d2006b3f60bf802a724541b095bdb3fe3828200d58c5d"
   name = "cloud.google.com/go"
   packages = [
     "compute/metadata",
@@ -14,24 +14,16 @@
     "pubsub/internal/distribution",
   ]
   pruneopts = "UT"
-  revision = "c728a003b238b26cef9ab6753a5dc424b331c3ad"
-  version = "v0.27.0"
+  revision = "1fd54cf41e6e0e178ffe3c52b0e2260281f603e3"
+  version = "v0.32.0"
 
 [[projects]]
-  digest = "1:dc27d9777febe9e63ab33a2cd15e31ce8d9463932d2472cc7097dc662dedb5ab"
-  name = "contrib.go.opencensus.io/exporter/stackdriver"
-  packages = ["propagation"]
-  pruneopts = "UT"
-  revision = "2b93072101d466aa4120b3c23c2e1b08af01541c"
-  version = "v0.6.0"
-
-[[projects]]
-  digest = "1:be7eac8dfa5d34124eca37432094d56dc88ffa2236f94ba140a40753e23b90ac"
+  digest = "1:7b4a018621af741c5a3178f450fd66b0819a41b989f3dc593ba1ead278f0b359"
   name = "github.com/aukbit/event-source-proto"
-  packages = ["."]
+  packages = ["es"]
   pruneopts = "UT"
-  revision = "3a4e5a33e1dbb726e9b496a71e15d96b2f020e60"
-  version = "0.2.0"
+  revision = "2871c436e8e9808fb4d95910cf6e27b627ad1c1a"
+  version = "0.3.1"
 
 [[projects]]
   branch = "master"
@@ -42,7 +34,7 @@
   revision = "d0de99d68580109cd89156838dce0f02694c5402"
 
 [[projects]]
-  digest = "1:018d56a1547c2cc9847bd26251e63ec952f12eae15692d81f49ece664611a8aa"
+  digest = "1:013bec40e1d656954fa870a394044546f9f46a33f1e00251de76d078d8a94140"
   name = "github.com/aukbit/pluto"
   packages = [
     ".",
@@ -54,8 +46,8 @@
     "server/router",
   ]
   pruneopts = "UT"
-  revision = "b2493f15eeb4e5d2f114df51b0d12646fcdf4099"
-  version = "5.2.0"
+  revision = "6ccc87e15987e4e32e0fd38a7d788e08d971710c"
+  version = "5.5.0"
 
 [[projects]]
   digest = "1:fce9b252e844078774d9bc017acfba0e961e104f268859b23e277d3d23270202"
@@ -92,21 +84,23 @@
   version = "v0.8.0"
 
 [[projects]]
-  digest = "1:1de3e7bb27f0f7811d09fbf1325eeb086f31f11df68f24e6e8db41d5fd0fb4f8"
+  digest = "1:a79db0d8827ceac01726ebea395bf8e67af9b3cced22aedda5fce2a6952038fb"
   name = "github.com/rs/zerolog"
   packages = [
     ".",
+    "internal/cbor",
     "internal/json",
   ]
   pruneopts = "UT"
-  revision = "2ed2f2c974489526d10329dae76d0f175684109a"
-  version = "v1.2.2"
+  revision = "e7627a4f73bfd66654c39d79386e5374cc36ffec"
+  version = "v1.10.0"
 
 [[projects]]
-  digest = "1:8e7fcf54cc7c0c3aba7801812ae70343585b3cb663f6cb11ad50c0c28552f359"
+  digest = "1:381ccafa5e013a0e3f9b54604ae522a73b9533a375a6a714b483c634d5e927ab"
   name = "go.opencensus.io"
   packages = [
     ".",
+    "exemplar",
     "internal",
     "internal/tagencoding",
     "plugin/ocgrpc",
@@ -122,12 +116,12 @@
     "trace/tracestate",
   ]
   pruneopts = "UT"
-  revision = "79993219becaa7e29e3b60cb67f5b8e82dee11d6"
-  version = "v0.17.0"
+  revision = "b7bf3cdb64150a8c8c53b769fdeb2ba581bd4d4b"
+  version = "v0.18.0"
 
 [[projects]]
   branch = "master"
-  digest = "1:1c14517b2f106c61d75006199b46a46576058661d469658cb0f90739919641d2"
+  digest = "1:cb50171ec1782317a86709fce896e4f564a35ceece954561288afa5948cf5856"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -140,11 +134,11 @@
     "trace",
   ]
   pruneopts = "UT"
-  revision = "26e67e76b6c3f6ce91f7c52def5af501b4e0f3a2"
+  revision = "c10e9556a7bc0e7c942242b606f0acf024ad5d6a"
 
 [[projects]]
   branch = "master"
-  digest = "1:f645667d687fc8bf228865a2c5455824ef05bad08841e673673ef2bb89ac5b90"
+  digest = "1:a092b4d38fd89b648d8275a57bf94f8ab62d09224e83ba105dadab472dc71428"
   name = "golang.org/x/oauth2"
   packages = [
     ".",
@@ -154,7 +148,7 @@
     "jwt",
   ]
   pruneopts = "UT"
-  revision = "d2e6202438beef2727060aa7cabdd924d92ebfd9"
+  revision = "232e45548389bd9357411a6922a07c5fd4068bda"
 
 [[projects]]
   branch = "master"
@@ -169,11 +163,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:6eb2645d74b43d9c87b51947df39f7c668a4f422cd512053f7f6f75bfaad0197"
+  digest = "1:35560529f5721d65f36dc23aa15fbf7306c5091cdc3f29f65881af5031b80cc8"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "d0be0721c37eeb5299f245a996a483160fc36940"
+  revision = "9b800f95dbbc54abff0acf7ee32d88ba4e328c89"
 
 [[projects]]
   digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"
@@ -200,7 +194,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:1c282e477c97e1be16f3cd5962a041073969cee2711aa8c0b8188a25727c0e39"
+  digest = "1:915d0b9a1a51eb9e1598a420ed3ea1693bd46672d13afc7cb6d62dfd700f2f24"
   name = "google.golang.org/api"
   packages = [
     "googleapi/transport",
@@ -211,12 +205,13 @@
     "transport",
     "transport/grpc",
     "transport/http",
+    "transport/http/internal/propagation",
   ]
   pruneopts = "UT"
-  revision = "19ff8768a5c0b8e46ea281065664787eefc24121"
+  revision = "04bb50b6b83d0e72253821af8cf3252d8e866517"
 
 [[projects]]
-  digest = "1:26619fcd2452b4044174d26acd8b09c09dffee9a1c3a22d2383b873aa9a0131f"
+  digest = "1:b13819327be647014031c6a194299da87ca35313bfc01fdc1da7bd3ddf08cbce"
   name = "google.golang.org/appengine"
   packages = [
     ".",
@@ -233,12 +228,12 @@
     "urlfetch",
   ]
   pruneopts = "UT"
-  revision = "b1f26356af11148e710935ed1ac8a7f5702c7612"
-  version = "v1.1.0"
+  revision = "4a4468ece617fc8205e99368fa2200e9d1fad421"
+  version = "v1.3.0"
 
 [[projects]]
   branch = "master"
-  digest = "1:b45710cc2acef037e49197b9a41697375927bbe5986240f0194a33ef556d24cd"
+  digest = "1:a27cead08481bf67712a240a18bbe8e0da035db2a59ce85b67142f6f9fb6a5c6"
   name = "google.golang.org/genproto"
   packages = [
     "googleapis/api/annotations",
@@ -248,10 +243,10 @@
     "protobuf/field_mask",
   ]
   pruneopts = "UT"
-  revision = "4b56f30a1fd96a133a036b62cdd2a249883dd89b"
+  revision = "c830210a61dfaa790e1920f8d0470fc27bc2efbe"
 
 [[projects]]
-  digest = "1:d4c0d70e4b81fef3d0dc377300baf1585b7b3ee62c9c107d3d109c7bc24e7b0e"
+  digest = "1:186af6cd9d713c3e72e9c353d19fbbccbbbe5f50fe09aa4c4ee65bb99a8fd9b8"
   name = "google.golang.org/grpc"
   packages = [
     ".",
@@ -285,15 +280,15 @@
     "tap",
   ]
   pruneopts = "UT"
-  revision = "8dea3dc473e90c8179e519d91302d0597c0ca1d1"
-  version = "v1.15.0"
+  revision = "2e463a05d100327ca47ac218281906921038fd95"
+  version = "v1.16.0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
     "cloud.google.com/go/pubsub",
-    "github.com/aukbit/event-source-proto",
+    "github.com/aukbit/event-source-proto/es",
     "github.com/aukbit/pluto",
     "github.com/aukbit/pluto/client",
     "github.com/aukbit/pluto/server",
