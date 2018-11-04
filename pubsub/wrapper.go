@@ -59,7 +59,7 @@ func ActionWrapper(aggregator interface{}, aFn store.ApplyFn, hFn ...HookFn) Act
 		prevState := proto.Clone(s.State.(proto.Message))
 
 		// Apply event received in previous state to get the next state
-		nextState, err := aFn(e, prevState)
+		nextState, err := aFn(e, s.State)
 		if err != nil {
 			return err
 		}
