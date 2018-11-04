@@ -5,7 +5,7 @@ import (
 
 	context "golang.org/x/net/context"
 
-	pb "github.com/aukbit/event-source-proto"
+	pb "github.com/aukbit/event-source-proto/es"
 	"github.com/aukbit/pluto"
 	store "github.com/aukbit/pluto-event-source/store"
 	"github.com/golang/protobuf/proto"

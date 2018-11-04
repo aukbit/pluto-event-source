@@ -5,7 +5,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	pb "github.com/aukbit/event-source-proto"
+	pb "github.com/aukbit/event-source-proto/es"
 	"github.com/golang/protobuf/proto"
 )
 
