@@ -1,7 +1,6 @@
 package store
 
 import (
-	"errors"
 	"fmt"
 
 	context "golang.org/x/net/context"
@@ -11,10 +10,12 @@ import (
 	"github.com/aukbit/pluto/server"
 	"github.com/golang/protobuf/proto"
 	"github.com/rs/zerolog"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 )
 
-var ErrConcurrencyException = errors.New("concurrency exception")
+var ErrConcurrencyException = status.Error(codes.AlreadyExists, "concurrency exception")
 
 // Validate helper functions to validate the aggregate
 type Validate func(*Store) error
