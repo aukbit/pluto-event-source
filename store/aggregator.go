@@ -15,7 +15,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-var ErrConcurrencyException = status.Error(codes.AlreadyExists, "concurrency exception")
+var ErrConcurrencyException = status.Error(codes.Aborted, "concurrency exception")
 
 // Validate helper functions to validate the aggregate
 type Validate func(*Store) error
@@ -68,11 +68,14 @@ func Aggregate(ctx context.Context, aggregator interface{}, id string, in proto.
 
 	// Dispatch event
 	if _, err := s.Dispatch(ctx, e); err != nil {
-		if err == ErrConcurrencyException {
-			l.Warn().Msgf("event %s with %s version %d  will try again got error %v", e.GetTopic(), e.Aggregate.GetId(), e.Aggregate.GetVersion(), ErrConcurrencyException)
+		st := status.Convert(err)
+		switch st.Code() {
+		case codes.Aborted:
+			l.Warn().Msgf("event %s with %s version %d  will try again got error %v", e.GetTopic(), e.Aggregate.GetId(), e.Aggregate.GetVersion(), st.Message())
 			return Aggregate(ctx, aggregator, id, in, topic, metadata, apply, validations...)
+		default:
+			return nil, err
 		}
-		return nil, err
 	}
 
 	// Apply last event to the aggregator
