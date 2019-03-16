@@ -1,6 +1,7 @@
 package store
 
 import (
+	"errors"
 	"fmt"
 
 	context "golang.org/x/net/context"
@@ -13,12 +14,14 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
+var ErrConcurrencyException = errors.New("concurrency exception")
+
 // Validate helper functions to validate the aggregate
 type Validate func(*Store) error
 
 // Aggregate proceess all aggregate steps
 func Aggregate(ctx context.Context, aggregator interface{}, id string, in proto.Message, topic string, metadata map[string]string, apply ApplyFn, validations ...Validate) (*Store, error) {
-	logger := zerolog.Ctx(ctx)
+	l := zerolog.Ctx(ctx)
 
 	// Initialize aggregator store
 	s := NewStore(aggregator)
@@ -64,6 +67,10 @@ func Aggregate(ctx context.Context, aggregator interface{}, id string, in proto.
 
 	// Dispatch event
 	if _, err := s.Dispatch(ctx, e); err != nil {
+		if err == ErrConcurrencyException {
+			l.Warn().Msgf("event %s with %s version %d  will try again got error %v", e.GetTopic(), e.Aggregate.GetId(), e.Aggregate.GetVersion(), ErrConcurrencyException)
+			return Aggregate(ctx, aggregator, id, in, topic, metadata, apply, validations...)
+		}
 		return nil, err
 	}
 
@@ -71,7 +78,7 @@ func Aggregate(ctx context.Context, aggregator interface{}, id string, in proto.
 	if err := s.apply(e, apply); err != nil {
 		return nil, err
 	}
-	logger.Info().Msg(fmt.Sprintf("state: %v", s.State))
+	l.Info().Msg(fmt.Sprintf("state: %v", s.State))
 	return s, nil
 }
 

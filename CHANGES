@@ -1,3 +1,7 @@
+Version 0.6.7:
+ - dispatch new event if ErrConcurrencyException
+ - Merge branch release-0.6.6
+
 Version 0.6.6:
  - refactor event-source-proto
  - Merge branch release-0.6.5
