@@ -1,3 +1,7 @@
+Version 0.6.9:
+ - review ErrConcurrencyException error
+ - Merge branch release-0.6.8
+
 Version 0.6.8:
  - define grpc error
  - Merge branch release-0.6.7
