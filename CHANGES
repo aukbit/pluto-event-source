@@ -1,3 +1,7 @@
+Version 0.6.8:
+ - define grpc error
+ - Merge branch release-0.6.7
+
 Version 0.6.7:
  - dispatch new event if ErrConcurrencyException
  - Merge branch release-0.6.6
