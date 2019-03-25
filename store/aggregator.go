@@ -3,14 +3,13 @@ package store
 import (
 	"fmt"
 
-	"github.com/aukbit/pluto-event-source/pubsub"
-
 	context "golang.org/x/net/context"
 
 	pb "github.com/aukbit/event-source-proto/es"
 	"github.com/aukbit/pluto"
 	"github.com/golang/protobuf/proto"
 	"github.com/rs/zerolog"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -62,7 +61,7 @@ func Aggregate(ctx context.Context, aggregator interface{}, id string, in proto.
 		OriginIp:   "127.0.0.1",
 	}
 
-	if eid := pubsub.FromContextAny(ctx, "eid"); eid != "" {
+	if eid, ok := FromContextAny(ctx, "eid").(string); ok {
 		e.Metadata = map[string]string{"eid": eid}
 	}
 
