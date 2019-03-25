@@ -1,3 +1,7 @@
+Version 0.6.10:
+ - review pubsub context
+ - Merge branch release-0.6.9
+
 Version 0.6.9:
  - review ErrConcurrencyException error
  - Merge branch release-0.6.8
