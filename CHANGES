@@ -1,3 +1,7 @@
+Version 0.7.0:
+ - fix circular import - merge all packages
+ - Merge branch release-0.6.10
+
 Version 0.6.10:
  - review pubsub context
  - Merge branch release-0.6.9
