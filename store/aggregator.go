@@ -3,15 +3,15 @@ package store
 import (
 	"fmt"
 
+	"github.com/aukbit/pluto-event-source/pubsub"
+
 	context "golang.org/x/net/context"
 
 	pb "github.com/aukbit/event-source-proto/es"
 	"github.com/aukbit/pluto"
-	"github.com/aukbit/pluto/server"
 	"github.com/golang/protobuf/proto"
 	"github.com/rs/zerolog"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
@@ -62,7 +62,7 @@ func Aggregate(ctx context.Context, aggregator interface{}, id string, in proto.
 		OriginIp:   "127.0.0.1",
 	}
 
-	if eid := eidFromIncomingContext(ctx); eid != "" {
+	if eid := pubsub.FromContextAny(ctx, "eid"); eid != "" {
 		e.Metadata = map[string]string{"eid": eid}
 	}
 
@@ -84,25 +84,4 @@ func Aggregate(ctx context.Context, aggregator interface{}, id string, in proto.
 	}
 	l.Info().Msg(fmt.Sprintf("state: %v", s.State))
 	return s, nil
-}
-
-// ---
-
-// eidFromIncomingContext returns eid from incoming context
-func eidFromIncomingContext(ctx context.Context) string {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		s := server.FromContext(ctx)
-		l := s.Logger()
-		l.Warn().Msg("metadata not available in incoming context")
-		return ""
-	}
-	_, ok = md["eid"]
-	if !ok {
-		s := server.FromContext(ctx)
-		l := s.Logger()
-		l.Warn().Msg("eid not available in metadata")
-		return ""
-	}
-	return md["eid"][0]
 }
